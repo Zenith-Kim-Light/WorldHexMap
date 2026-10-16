@@ -8,9 +8,11 @@ func ResizeWindow() {
 
 type Cam struct {
 	Camera2D rl.Camera2D
+	zoom     Zoom
 }
 
 func InitCamera() Cam {
+	z := InitZoom()
 	return Cam{
 		Camera2D: rl.Camera2D{
 			Target:   rl.NewVector2(0, 0),
@@ -18,6 +20,7 @@ func InitCamera() Cam {
 			Rotation: 0.0,
 			Zoom:     1.0, // Масштаб 1:1
 		},
+		zoom: z,
 	}
 }
 
@@ -43,4 +46,10 @@ func (cam *Cam) Navigate2D() {
 
 func (cam *Cam) Begin() {
 	rl.BeginMode2D(cam.Camera2D)
+}
+
+func (cam *Cam) Zooming(zd ZoomDirection) {
+	cam.zoom.Scale(zd)
+	s := cam.zoom.getScale()
+	cam.Camera2D.Zoom = float32(s)
 }

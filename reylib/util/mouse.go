@@ -22,6 +22,10 @@ func ProcessMouseClick(cam Cam, tiles map[string]*TileType) {
 	}
 }
 
+func GetZoomDirectionByWheel() ZoomDirection {
+	return ZoomDirection(rl.GetMouseWheelMove())
+}
+
 //func ProcessMouseClickOnHex(cam Cam, layout hexgrid.Layout) {
 //	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
 //		clickPos := rl.GetMousePosition()

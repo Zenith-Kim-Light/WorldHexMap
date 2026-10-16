@@ -36,10 +36,6 @@ func main() {
 			util.ResizeWindow()
 		}
 
-		if rl.IsWindowResized() {
-			util.ResizeWindow()
-		}
-
 		if rl.IsFileDropped() {
 			paths := rl.LoadDroppedFiles()
 			if len(paths) > 0 {
@@ -52,7 +48,10 @@ func main() {
 			}
 		}
 
-		//util.ProcessMouseClickOnHex(cam, layout)
+		zoomDirection := util.GetZoomDirectionByWheel()
+		if zoomDirection != util.ZoomNone {
+			cam.Zooming(zoomDirection)
+		}
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
