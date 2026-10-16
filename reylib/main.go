@@ -2,17 +2,24 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
-	"github.com/Zenith-Kim-Light/WorldHexMap/internal/watabou_map"
+	"github.com/Zenith-Kim-Light/WorldHexMap/internal"
 	"github.com/Zenith-Kim-Light/WorldHexMap/reylib/util"
 	"github.com/Zenith-Kim-Light/hexgrid"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+const screenWidthDefault = 800
+const screenHeightDefault = 600
+
+func init() {
+	runtime.LockOSThread()
+}
+
 func main() {
-	//runtime.LockOSThread()
-	screenWidth := int32(800)
-	screenHeight := int32(600)
+	screenWidth := int32(screenHeightDefault)
+	screenHeight := int32(screenWidthDefault)
 	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.SetConfigFlags(rl.FlagWindowMinimized)
 
@@ -23,7 +30,7 @@ func main() {
 	fmt.Println(rl.IsWindowResized())
 	defer rl.CloseWindow()
 
-	var WatabouMap *watabou_map.WatabouMap
+	var regionMap *internal.RegionMap
 
 	cam := util.InitCamera()
 
@@ -43,7 +50,7 @@ func main() {
 				if appErr != nil {
 					rl.TraceLog(rl.LogError, "Error occurred during process file: %v", appErr)
 				} else {
-					WatabouMap = wm
+					regionMap = internal.NewRegionMap(wm)
 				}
 			}
 		}
@@ -53,12 +60,24 @@ func main() {
 			cam.Zooming(zoomDirection)
 		}
 
+		clickPosition := util.GetMouseLeftClickPosition()
+		if clickPosition != nil {
+
+		}
+
+		rl.DrawCircleLines(
+			int32(cam.Camera2D.Offset.X),
+			int32(cam.Camera2D.Offset.Y),
+			5.,
+			rl.Red,
+		)
+
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
 		cam.Begin()
 
-		if nil != WatabouMap {
-			fillWorld(WatabouMap)
+		if nil != regionMap {
+			drawMap(regionMap)
 		}
 		rl.EndMode2D()
 		rl.EndDrawing()
@@ -66,50 +85,23 @@ func main() {
 	}
 }
 
-func fillWorld(wm *watabou_map.WatabouMap) {
-	origin := hexgrid.Point{X: 0, Y: 0}
-	size := hexgrid.Point{X: 20, Y: 20}
-
-	var layout hexgrid.Layout
-	var r float32
-	var f func(hex hexgrid.Hex) hexgrid.Hex
-	if watabou_map.LayoutEvenQ == wm.Layout {
-		layout = hexgrid.Layout{Orientation: hexgrid.OrientationFlat, Size: size, Origin: origin}
-		r = 0.0
-		f = evenq_to_axial
+func drawMap(regionMap *internal.RegionMap) {
+	// todo проверить как работает ориентация гекса в hexgrid
+	var rotation float32
+	if regionMap.HexOrientation == "OrientationFlat" {
+		rotation = 0.0
 	} else {
-		layout = hexgrid.Layout{Orientation: hexgrid.OrientationPointy, Size: size, Origin: origin}
-		r = 90.0
-		f = oddr_to_axial
+		rotation = 90.0
 	}
 
-	for _, wmHex := range wm.Hexes {
-		hex1 := hexgrid.NewHex(wmHex.Q, wmHex.R)
-		drawHex(layout, hex1, r, f)
+	for _, wmHex := range regionMap.WatabouMap.Hexes {
+		hex := hexgrid.NewHex(wmHex.Q, wmHex.R)
+		point := regionMap.ConvertHexToAxial(hex)
+
+		vV := rl.NewVector2(float32(point.X), float32(point.Y))
+		colorRGBA_V := rl.DarkPurple
+		rl.DrawPolyLines(vV, 6, 20, rotation, colorRGBA_V)
+		s := fmt.Sprintf("Q:%d R:%d", hex.Q, hex.R)
+		rl.DrawText(s, int32(point.X-10), int32(point.Y-10), 10, rl.Black)
 	}
-}
-
-func drawHex(layout hexgrid.Layout, hex hexgrid.Hex, r float32, f func(hex hexgrid.Hex) hexgrid.Hex) {
-	aHex := f(hex)
-	point := hexgrid.HexToPixel(layout, aHex)
-	vV := rl.NewVector2(float32(point.X), float32(point.Y))
-
-	colorRGBA_V := rl.DarkPurple
-	rl.DrawPolyLines(vV, 6, 20, r, colorRGBA_V)
-	s := fmt.Sprintf("Q:%d R:%d", hex.Q, hex.R)
-	rl.DrawText(s, int32(point.X-10), int32(point.Y-10), 10, rl.Black)
-}
-
-func evenq_to_axial(hex hexgrid.Hex) hexgrid.Hex {
-	parity := hex.Q & 1
-	var q = hex.Q
-	var r = hex.R - (hex.Q+parity)/2
-	return hexgrid.NewHex(q, r)
-}
-
-func oddr_to_axial(hex hexgrid.Hex) hexgrid.Hex {
-	parity := hex.R & 1
-	var q = hex.Q - (hex.R-parity)/2
-	var r = hex.R
-	return hexgrid.NewHex(q, r)
 }
