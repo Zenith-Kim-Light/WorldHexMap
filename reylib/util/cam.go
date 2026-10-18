@@ -3,7 +3,16 @@ package util
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 func ResizeWindow() {
-
+	if rl.IsWindowMaximized() {
+		rl.MinimizeWindow()
+		rl.SetWindowFocused()
+		return
+	}
+	if rl.IsWindowMinimized() {
+		rl.MaximizeWindow()
+		rl.SetWindowFocused()
+		return
+	}
 }
 
 type Cam struct {

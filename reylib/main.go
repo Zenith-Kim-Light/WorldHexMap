@@ -18,16 +18,16 @@ func init() {
 }
 
 func main() {
-	screenWidth := int32(screenHeightDefault)
-	screenHeight := int32(screenWidthDefault)
+	screenHeight := int32(screenHeightDefault)
+	screenWidth := int32(screenWidthDefault)
 	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.SetConfigFlags(rl.FlagWindowMinimized)
 
 	rl.InitWindow(screenWidth, screenHeight, "WatabouMap editor")
 	rl.SetTargetFPS(60)
 
-	//target := rl.LoadRenderTexture
-	fmt.Println(rl.IsWindowResized())
+	rl.SetWindowFocused()
+
 	defer rl.CloseWindow()
 
 	var regionMap *internal.RegionMap
