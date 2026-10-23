@@ -57,6 +57,10 @@ func (cam *Cam) Begin() {
 	rl.BeginMode2D(cam.Camera2D)
 }
 
+func (cam *Cam) End() {
+	rl.EndMode2D()
+}
+
 func (cam *Cam) Zooming(zd ZoomDirection) {
 	cam.zoom.Scale(zd)
 	s := cam.zoom.getScale()

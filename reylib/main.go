@@ -10,20 +10,20 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const screenWidthDefault = 800
-const screenHeightDefault = 600
+const windowWidthDefault = 800
+const windowHeightDefault = 600
 
 func init() {
 	runtime.LockOSThread()
 }
 
 func main() {
-	screenHeight := int32(screenHeightDefault)
-	screenWidth := int32(screenWidthDefault)
+	windowHeight := int32(windowHeightDefault)
+	windowWidth := int32(windowWidthDefault)
 	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.SetConfigFlags(rl.FlagWindowMinimized)
 
-	rl.InitWindow(screenWidth, screenHeight, "WatabouMap editor")
+	rl.InitWindow(windowWidth, windowHeight, "WatabouMap editor")
 	rl.SetTargetFPS(60)
 
 	rl.SetWindowFocused()
@@ -79,6 +79,7 @@ func main() {
 		if nil != regionMap {
 			drawMap(regionMap)
 		}
+		cam.End()
 		rl.EndMode2D()
 		rl.EndDrawing()
 		i += 1.0
