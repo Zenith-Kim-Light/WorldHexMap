@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 
 	"github.com/Zenith-Kim-Light/WorldHexMap/internal"
+	"github.com/Zenith-Kim-Light/WorldHexMap/reylib/gui"
 	"github.com/Zenith-Kim-Light/WorldHexMap/reylib/util"
 	"github.com/Zenith-Kim-Light/hexgrid"
+	rlgui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -23,6 +26,8 @@ func main() {
 	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.SetConfigFlags(rl.FlagWindowMinimized)
 
+	buttons := initButtons()
+
 	rl.InitWindow(windowWidth, windowHeight, "WatabouMap editor")
 	rl.SetTargetFPS(60)
 
@@ -37,6 +42,8 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	var i float32 = 0.0
+
+	var rects = initMenuRects(buttons)
 	for !rl.WindowShouldClose() {
 		cam.Navigate2D()
 		if rl.IsWindowResized() {
@@ -80,9 +87,36 @@ func main() {
 			drawMap(regionMap)
 		}
 		cam.End()
-		rl.EndMode2D()
+
+		for i, rect := range rects {
+			buttonInfo := buttons[i]
+			button := rlgui.Button(rect, buttonInfo.Label)
+			if button {
+				handleButton(gui.ButtonAction(i))
+			}
+		}
+
 		rl.EndDrawing()
 		i += 1.0
+	}
+}
+
+func initButtons() []gui.Button {
+	return []gui.Button{
+		{ID: gui.ActionField, Label: "Add Field"},
+		{ID: gui.ActionForest, Label: "Add Forest"},
+		{ID: gui.ActionMount, Label: "Add Mount"},
+		{ID: gui.ActionWater, Label: "Add Water"},
+		{ID: gui.ActionExit, Label: "EXIT"},
+	}
+}
+
+func handleButton(buttonId gui.ButtonAction) {
+	switch buttonId {
+	case gui.ActionExit:
+		os.Exit(0)
+	default:
+		fmt.Print("Пу")
 	}
 }
 
@@ -105,4 +139,29 @@ func drawMap(regionMap *internal.RegionMap) {
 		s := fmt.Sprintf("Q:%d R:%d", hex.Q, hex.R)
 		rl.DrawText(s, int32(point.X-10), int32(point.Y-10), 10, rl.Black)
 	}
+}
+
+func initMenuRects(buttons []gui.Button) []rl.Rectangle {
+	screenHeight := float32(rl.GetScreenHeight())
+	sidebarWidth := float32(220)
+	sidebarRect := rl.NewRectangle(0, 0, sidebarWidth, screenHeight)
+	rlgui.Panel(sidebarRect, "Menu")
+
+	var (
+		btnPaddingTop  float32 = 1
+		btnPaddingLeft float32 = 1
+		btnHeight      float32 = 30
+		btnSpacing     float32 = 1
+		btnWidth       float32 = sidebarWidth - (btnPaddingLeft * 2)
+	)
+
+	var rectangles []rl.Rectangle
+
+	for i := range buttons {
+		btnY := btnPaddingTop + float32(i)*(btnHeight+btnSpacing)
+		btnRect := rl.NewRectangle(btnPaddingLeft, btnY, btnWidth, btnHeight)
+		rectangles = append(rectangles, btnRect)
+	}
+
+	return rectangles
 }

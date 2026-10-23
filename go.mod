@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/ebitengine/purego v0.11.1 // indirect
+	github.com/gen2brain/raylib-go/raygui v0.0.0-20260815042312-80156a59a482 // indirect
 	github.com/jupiterrider/ffi v0.8.0 // indirect
 	golang.org/x/exp v0.0.0-20261005173118-76772065c9b0 // indirect
 )
