@@ -19,10 +19,10 @@ type WatabouMap struct {
 
 // WatabouBp Parameters(blueprint) for the Watabou map: dimensions, tags, and seed. Actually, I only need the dimensions.
 type WatabouBp struct {
-	Width  int      `json:"width"`
-	Height int      `json:"height"`
+	Width  int32    `json:"width"`
+	Height int32    `json:"height"`
 	Tags   []string `json:"tags"`
-	Seed   int      `json:"seed"`
+	Seed   int64    `json:"seed"`
 }
 
 type WatabouHex struct {

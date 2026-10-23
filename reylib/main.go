@@ -44,6 +44,8 @@ func main() {
 	var i float32 = 0.0
 
 	var rects = initMenuRects(buttons)
+	var rt2d rl.RenderTexture2D
+	var textureRectangle rl.Rectangle
 	for !rl.WindowShouldClose() {
 		cam.Navigate2D()
 		if rl.IsWindowResized() {
@@ -58,6 +60,15 @@ func main() {
 					rl.TraceLog(rl.LogError, "Error occurred during process file: %v", appErr)
 				} else {
 					regionMap = internal.NewRegionMap(wm)
+					textureWidth, textureHeight := util.CalcNearestPowersOfTwo(regionMap.WatabouMap.Bp.Width, regionMap.WatabouMap.Bp.Height)
+					rt2d = rl.LoadRenderTexture(textureWidth, textureHeight)
+					rl.SetTextureFilter(rt2d.Texture, rl.FilterTrilinear)
+					rl.BeginTextureMode(rt2d)
+					rl.ClearBackground(rl.RayWhite)
+					drawMap(regionMap)
+					rl.EndTextureMode()
+					rl.GenTextureMipmaps(&rt2d.Texture)
+					textureRectangle = rl.NewRectangle(0, 0, float32(textureWidth), -float32(textureHeight))
 				}
 			}
 		}
@@ -72,20 +83,18 @@ func main() {
 
 		}
 
-		rl.DrawCircleLines(
-			int32(cam.Camera2D.Offset.X),
-			int32(cam.Camera2D.Offset.Y),
-			5.,
-			rl.Red,
-		)
-
-		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
 		cam.Begin()
 
-		if nil != regionMap {
-			drawMap(regionMap)
+		if rt2d.ID != 0 {
+			rl.DrawTextureRec(rt2d.Texture, textureRectangle, rl.Vector2{}, rl.White)
 		}
+		rl.DrawCircleLines(
+			int32(cam.Camera2D.Target.X),
+			int32(cam.Camera2D.Target.Y),
+			5.,
+			rl.Red,
+		)
 		cam.End()
 
 		for i, rect := range rects {
