@@ -1,4 +1,4 @@
-package util
+package gui
 
 type Zoom struct {
 	scaleKey   int

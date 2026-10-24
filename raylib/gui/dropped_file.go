@@ -1,9 +1,10 @@
-package util
+package gui
 
 import (
 	"encoding/json"
-	"github.com/Zenith-Kim-Light/WorldHexMap/internal/watabou_map"
 	"os"
+
+	"github.com/Zenith-Kim-Light/WorldHexMap/internal/watabou_map"
 )
 
 func ProcessDroppedFile(path string) (*watabou_map.WatabouMap, error) {

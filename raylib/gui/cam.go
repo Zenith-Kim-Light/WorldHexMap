@@ -1,6 +1,8 @@
-package util
+package gui
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 func ResizeWindow() {
 	if rl.IsWindowMaximized() {

@@ -1,4 +1,4 @@
-package util
+package gui
 
 import (
 	"fmt"
@@ -17,9 +17,9 @@ func GetMouseLeftClickPosition() *Click {
 		vector := rl.GetMousePosition()
 		return &Click{button: int32(rl.MouseButtonLeft), pos: vector}
 	}
-	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
+	if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
 		vector := rl.GetMousePosition()
-		return &Click{button: int32(rl.MouseButtonLeft), pos: vector}
+		return &Click{button: int32(rl.MouseButtonRight), pos: vector}
 	}
 	return nil
 }

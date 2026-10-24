@@ -6,8 +6,8 @@ import (
 	"runtime"
 
 	"github.com/Zenith-Kim-Light/WorldHexMap/internal"
-	"github.com/Zenith-Kim-Light/WorldHexMap/reylib/gui"
-	"github.com/Zenith-Kim-Light/WorldHexMap/reylib/util"
+	"github.com/Zenith-Kim-Light/WorldHexMap/raylib/gui"
+	"github.com/Zenith-Kim-Light/WorldHexMap/raylib/util"
 	"github.com/Zenith-Kim-Light/hexgrid"
 	rlgui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -37,11 +37,9 @@ func main() {
 
 	var regionMap *internal.RegionMap
 
-	cam := util.InitCamera()
+	cam := gui.InitCamera()
 
 	rl.SetTargetFPS(60)
-
-	var i float32 = 0.0
 
 	var rects = initMenuRects(buttons)
 	var rt2d rl.RenderTexture2D
@@ -49,13 +47,13 @@ func main() {
 	for !rl.WindowShouldClose() {
 		cam.Navigate2D()
 		if rl.IsWindowResized() {
-			util.ResizeWindow()
+			gui.ResizeWindow()
 		}
 
 		if rl.IsFileDropped() {
 			paths := rl.LoadDroppedFiles()
 			if len(paths) > 0 {
-				wm, appErr := util.ProcessDroppedFile(paths[0])
+				wm, appErr := gui.ProcessDroppedFile(paths[0])
 				if appErr != nil {
 					rl.TraceLog(rl.LogError, "Error occurred during process file: %v", appErr)
 				} else {
@@ -73,12 +71,12 @@ func main() {
 			}
 		}
 
-		zoomDirection := util.GetZoomDirectionByWheel()
-		if zoomDirection != util.ZoomNone {
+		zoomDirection := gui.GetZoomDirectionByWheel()
+		if zoomDirection != gui.ZoomNone {
 			cam.Zooming(zoomDirection)
 		}
 
-		clickPosition := util.GetMouseLeftClickPosition()
+		clickPosition := gui.GetMouseLeftClickPosition()
 		if clickPosition != nil {
 
 		}
@@ -106,7 +104,6 @@ func main() {
 		}
 
 		rl.EndDrawing()
-		i += 1.0
 	}
 }
 
